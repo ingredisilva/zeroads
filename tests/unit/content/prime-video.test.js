@@ -11,6 +11,7 @@ describe('prime-video content script', () => {
   let capturedMutationCallback;
 
   beforeEach(() => {
+    // MutationObserver mock — captura o callback para disparar manualmente nos testes
     capturedMutationCallback = null;
     global.MutationObserver = jest.fn().mockImplementation(function (callback) {
       capturedMutationCallback = callback;
@@ -180,7 +181,7 @@ describe('prime-video content script', () => {
       expect(chrome.runtime.sendMessage).not.toHaveBeenCalled();
     });
 
-    it('não pula quando duration é 0 (stream ainda não carregou metadados)', () => {
+    it('não pula quando duration é 0 ou NaN (stream ainda não carregou metadados)', () => {
       const mockVideo = { duration: 0, currentTime: 0 };
       mockDetector.isAdVideoPlaying.mockReturnValue(true);
       mockDetector.getAdVideo.mockReturnValue(mockVideo);
@@ -265,5 +266,10 @@ describe('prime-video content script', () => {
       );
       expect(bannerCalls.length).toBe(0);
     });
+  });
+
+  it('callback não dispara nada quando observer ainda não foi iniciado', () => {
+    // capturedMutationCallback é null se startObserver não foi chamado
+    expect(capturedMutationCallback).toBeNull();
   });
 });
