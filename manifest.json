@@ -19,7 +19,7 @@
   "content_scripts": [
     {
       "matches": ["*://*.primevideo.com/*"],
-      "js": ["src/content/prime-video.js"],
+      "js": ["src/content/detector.js", "src/content/prime-video.js"],
       "run_at": "document_idle"
     }
   ],
