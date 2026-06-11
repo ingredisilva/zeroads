@@ -21,6 +21,7 @@ var primeVideo = {
       if (_detector.isAdVideoPlaying(document)) {
         primeVideo._skipAdVideo();
       }
+      primeVideo._hideBanners();
     });
     _observer.observe(document.body, { childList: true, subtree: true });
   },
@@ -38,6 +39,22 @@ var primeVideo = {
     if (!video || !video.duration || video.currentTime >= video.duration) return;
     video.currentTime = video.duration;
     chrome.runtime.sendMessage({ action: 'incrementCount', type: 'video' });
+  },
+
+  // RF02: oculta banners e CTAs de upgrade exibidos durante anúncios.
+  // Guard em each: ignora elementos já ocultos para não double-contar.
+  _hideBanners: function () {
+    var banners = _detector.findBanners(document);
+    banners.forEach(function (el) {
+      if (el.style.display === 'none') return;
+      el.style.display = 'none';
+      chrome.runtime.sendMessage({ action: 'incrementCount', type: 'banner' });
+    });
+
+    var modals = _detector.findUpsellModals(document);
+    modals.forEach(function (el) {
+      el.style.display = 'none';
+    });
   },
 
   handleMessage: function (message) {

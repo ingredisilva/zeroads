@@ -153,6 +153,8 @@ describe('prime-video content script', () => {
 
     it('não faz nada quando nenhum anúncio está em reprodução', () => {
       mockDetector.isAdVideoPlaying.mockReturnValue(false);
+      mockDetector.findBanners.mockReturnValue([]);
+      mockDetector.findUpsellModals.mockReturnValue([]);
 
       script.startObserver();
       capturedMutationCallback([]);
@@ -189,10 +191,85 @@ describe('prime-video content script', () => {
 
       expect(chrome.runtime.sendMessage).not.toHaveBeenCalled();
     });
+  });
 
-    it('callback não dispara nada quando observer ainda não foi iniciado', () => {
-      // capturedMutationCallback é null se startObserver não foi chamado
-      expect(capturedMutationCallback).toBeNull();
+  // ─── Ocultação de banners e modais (RF02) ─────────────────────────────────────
+
+  describe('_hideBanners — ocultação de overlays (RF02)', () => {
+    it('define display:none em cada banner encontrado', () => {
+      const banner1 = document.createElement('div');
+      const banner2 = document.createElement('button');
+      mockDetector.findBanners.mockReturnValue([banner1, banner2]);
+
+      script.startObserver();
+      capturedMutationCallback([]);
+
+      expect(banner1.style.display).toBe('none');
+      expect(banner2.style.display).toBe('none');
     });
+
+    it('envia incrementCount para cada banner ocultado', () => {
+      const banner1 = document.createElement('div');
+      const banner2 = document.createElement('div');
+      mockDetector.findBanners.mockReturnValue([banner1, banner2]);
+
+      script.startObserver();
+      capturedMutationCallback([]);
+
+      const bannerCalls = chrome.runtime.sendMessage.mock.calls.filter(
+        (call) => call[0].action === 'incrementCount' && call[0].type === 'banner'
+      );
+      expect(bannerCalls.length).toBe(2);
+    });
+
+    it('não envia mensagem quando não há banners', () => {
+      mockDetector.isAdVideoPlaying.mockReturnValue(false);
+      mockDetector.findBanners.mockReturnValue([]);
+      mockDetector.findUpsellModals.mockReturnValue([]);
+
+      script.startObserver();
+      capturedMutationCallback([]);
+
+      expect(chrome.runtime.sendMessage).not.toHaveBeenCalled();
+    });
+
+    it('oculta modais de upsell sem enviar incrementCount (modal, não banner)', () => {
+      const modal = document.createElement('div');
+      mockDetector.findUpsellModals.mockReturnValue([modal]);
+
+      script.startObserver();
+      capturedMutationCallback([]);
+
+      expect(modal.style.display).toBe('none');
+      const bannerCalls = chrome.runtime.sendMessage.mock.calls.filter(
+        (call) => call[0].type === 'banner'
+      );
+      expect(bannerCalls.length).toBe(0);
+    });
+
+    it('não lança erro quando findBanners retorna array vazio', () => {
+      mockDetector.findBanners.mockReturnValue([]);
+      script.startObserver();
+      expect(() => capturedMutationCallback([])).not.toThrow();
+    });
+
+    it('banner já oculto não recebe mensagem de incrementCount duplicada', () => {
+      const banner = document.createElement('div');
+      banner.style.display = 'none';
+      mockDetector.findBanners.mockReturnValue([banner]);
+
+      script.startObserver();
+      capturedMutationCallback([]);
+
+      const bannerCalls = chrome.runtime.sendMessage.mock.calls.filter(
+        (call) => call[0].type === 'banner'
+      );
+      expect(bannerCalls.length).toBe(0);
+    });
+  });
+
+  it('callback não dispara nada quando observer ainda não foi iniciado', () => {
+    // capturedMutationCallback é null se startObserver não foi chamado
+    expect(capturedMutationCallback).toBeNull();
   });
 });
