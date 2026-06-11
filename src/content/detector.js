@@ -11,18 +11,28 @@ const SELECTORS = {
 };
 
 function isAdVideoPlaying(doc) {
+  if (!SELECTORS.adVideo) return false;
+  return !!doc.querySelector(SELECTORS.adVideo);
 }
 
 function getAdVideo(doc) {
+  if (!SELECTORS.adVideoPlayer) return null;
+  return doc.querySelector(SELECTORS.adVideoPlayer);
 }
 
 function findBanners(doc) {
+  if (!SELECTORS.banners.length) return [];
+  return Array.from(doc.querySelectorAll(SELECTORS.banners.join(',')));
 }
 
 function findUpsellModals(doc) {
+  if (!SELECTORS.upsellModals.length) return [];
+  return Array.from(doc.querySelectorAll(SELECTORS.upsellModals.join(',')));
 }
 
 function findInactivityScreen(doc) {
+  if (!SELECTORS.inactivityScreen) return null;
+  return doc.querySelector(SELECTORS.inactivityScreen);
 }
 
 if (typeof module !== 'undefined') {

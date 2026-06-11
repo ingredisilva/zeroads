@@ -1,40 +1,43 @@
 // Content script injetado em primevideo.com.
 // Lê o estado ao iniciar — não depende de mensagem que pode ter sido perdida.
+//
+// Padrão de objeto: chamadas internas passam por `primeVideo.<método>`,
+// permitindo que jest.spyOn intercepte corretamente nos testes.
 
 var _observer = null;
 
-function startObserver() {
-  if (_observer) return;
-  _observer = new MutationObserver(function (_mutations) {
-    // Lógica de detecção será implementada em T08 e T09
-    // após os seletores serem mapeados em T06
-  });
-  _observer.observe(document.body, { childList: true, subtree: true });
-}
+var primeVideo = {
+  startObserver: function () {
+    if (_observer) return;
+    _observer = new MutationObserver(function (_mutations) {
+      // T08/T09: detecção implementada após T06 (inspeção do DOM)
+    });
+    _observer.observe(document.body, { childList: true, subtree: true });
+  },
 
-function stopObserver() {
-  if (!_observer) return;
-  _observer.disconnect();
-  _observer = null;
-}
+  stopObserver: function () {
+    if (!_observer) return;
+    _observer.disconnect();
+    _observer = null;
+  },
 
-function handleMessage(message) {
-  if (message.action === 'disable') stopObserver();
-  if (message.action === 'enable') startObserver();
-}
+  handleMessage: function (message) {
+    if (message.action === 'disable') primeVideo.stopObserver();
+    if (message.action === 'enable') primeVideo.startObserver();
+  },
 
-function init() {
-  chrome.storage.local.get(['enabled'], function (state) {
-    if (state.enabled !== false) startObserver();
-  });
-  chrome.runtime.onMessage.addListener(handleMessage);
-}
+  init: function () {
+    chrome.storage.local.get(['enabled'], function (state) {
+      if (state.enabled !== false) primeVideo.startObserver();
+    });
+    chrome.runtime.onMessage.addListener(primeVideo.handleMessage);
+  },
+};
 
-// Auto-inicializa apenas no contexto do navegador (não durante testes)
 if (typeof module === 'undefined') {
-  init();
+  primeVideo.init();
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { init, startObserver, stopObserver, handleMessage };
+  module.exports = primeVideo;
 }
