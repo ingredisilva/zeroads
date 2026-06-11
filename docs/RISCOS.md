@@ -9,6 +9,8 @@
 | R03 | Limitações do Manifest V3 bloqueiam funcionalidades | Média | Médio | 🟠 Alto |
 | R04 | Violação dos ToS da Amazon | Alta | Médio | 🟠 Alto |
 | R05 | Quebra de layout após remoção de elementos | Baixa | Baixo | 🟡 Médio |
+| R06 | Falsos positivos: bloqueio de conteúdo legítimo | Média | Alto | 🟠 Alto |
+| R07 | Amazon detecta e neutraliza o hack `currentTime` | Média | Alto | 🟠 Alto |
 
 ---
 
@@ -68,6 +70,28 @@
 - Preferir `visibility: hidden` ou `display: none` à remoção completa de elementos quando possível
 - Testar cada seletor em diferentes resolucões e estados da interface
 - Monitorar erros de console após manipulações via content script
+
+---
+
+### R06 — Falsos positivos: bloqueio de conteúdo legítimo `[Alto]`
+
+**Descrição:** Seletores CSS amplos ou heurísticas de detecção imprecisas podem ocultar ou remover elementos legítimos da interface — modais de detalhes de títulos, notificações do sistema, controles do player — prejudicando a experiência de uso. Ao contrário das demais falhas, falsos positivos muitas vezes não geram erro visível: o usuário simplesmente não consegue navegar normalmente.
+
+**Mitigação:**
+- Preferir seletores ancorados em atributos semânticos de anúncio (`aria-label`, `data-*`, `role`) a classes CSS geradas dinamicamente
+- Definir cenários explícitos de false positive nos specs antes de implementar (ver `specs/prime-video.spec.md`, cenários 2.3 e 6.2)
+- Incluir verificação de false positive em todo ciclo de testes manuais antes de cada release
+
+---
+
+### R07 — Detecção e contra-bloqueio do hack `currentTime` `[Alto]`
+
+**Descrição:** A técnica de pulo de anúncio via `video.currentTime = video.duration` é amplamente conhecida. A Amazon pode neutralizá-la com: listeners em eventos `seeking`/`seeked` que reposicionam o vídeo de volta ao anúncio, validação server-side da posição de playback, ou reinício automático do anúncio ao detectar seek abrupto. O sintoma — o anúncio "pula mas volta" — é pior do que uma falha óbvia, pois o usuário pode não perceber que a extensão deixou de funcionar.
+
+**Mitigação:**
+- Documentar no `ARQUITETURA.md` que o mecanismo `currentTime` é frágil por design e pode ser a primeira coisa a quebrar
+- Investigar alternativas antes ou durante a implementação: clicar no botão "Pular anúncio" quando presente, mute + aguardar fim natural do anúncio, ou combinação de estratégias com fallback
+- Adicionar triagem específica "hack detectado pela Amazon" ao processo de incidente (R01), pois o sintoma é diferente de uma simples quebra de seletor
 
 ---
 

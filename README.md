@@ -31,11 +31,21 @@ Para instalar em modo desenvolvedor:
 3. Ative o **Modo do desenvolvedor**
 4. Clique em **Carregar sem compactação** e selecione a pasta do projeto
 
+> **Nota:** se você tiver uma aba do Prime Video aberta no momento da instalação, recarregue-a (F5) para que a extensão entre em funcionamento.
+
+## Como funciona
+
+- **Bloqueio de rede:** requisições para servidores de anúncio são bloqueadas via `declarativeNetRequest` — mecanismo nativo do Chrome, sem interceptação de tráfego
+- **Pulo de anúncios em vídeo:** anúncios que passam pela camada de rede são detectados via `MutationObserver` e pulados automaticamente no player
+- **Privacidade:** nenhum dado é coletado, transmitido ou armazenado fora do seu dispositivo (ver [docs/REQUISITOS.md](docs/REQUISITOS.md) — RNF01)
+
 ## Documentação
 
 - [`docs/REQUISITOS.md`](docs/REQUISITOS.md) — Requisitos funcionais e não-funcionais
 - [`docs/ARQUITETURA.md`](docs/ARQUITETURA.md) — Decisões técnicas e estrutura do projeto
 - [`docs/RISCOS.md`](docs/RISCOS.md) — Riscos identificados e mitigações
+- [`docs/ROADMAP.md`](docs/ROADMAP.md) — Versões planejadas e funcionalidades futuras
+- [`specs/prime-video.spec.md`](specs/prime-video.spec.md) — Cenários de teste para o Amazon Prime Video
 
 ## Contribuindo
 

@@ -85,6 +85,18 @@ A extensão deve bloquear pop-ups e notificações que incentivam upgrade de pla
 
 ---
 
+### RF08 — Indicador visual no ícone da extensão `[P2 - Importante]`
+
+O ícone da extensão na barra de ferramentas do Chrome deve comunicar o estado atual sem que o usuário precise abrir o popup.
+
+**Critérios de aceite:**
+- Quando ativa e com pelo menos 1 bloqueio na sessão: ícone exibe badge numérico com a contagem total de bloqueios
+- Quando ativa e sem nenhum bloqueio (count = 0): ícone sem badge
+- Quando desativada pelo usuário: ícone exibe versão em escala de cinza (ou indicador visual distinto)
+- Badge é atualizado em tempo real a cada novo bloqueio, sem exigir reabertura do popup
+
+---
+
 ### RF07 — Remoção de telas de inatividade `[P3 - Nice to have]`
 
 A extensão deve dispensar automaticamente telas do tipo "Continuar assistindo?" que interrompem a reprodução.
@@ -166,3 +178,4 @@ Após publicação na Chrome Web Store, atualizações devem ser distribuídas a
 - Interface de configuração avançada de regras de filtro
 - Sincronização de configurações entre dispositivos
 - Importação/exportação de listas de filtro no formato uBlock Origin
+- **Abas abertas antes da instalação:** o Chrome não injeta content scripts retroativamente em abas já carregadas. A extensão não funcionará em abas do Prime Video abertas antes da instalação. O usuário deve recarregar essas abas (F5). Isso é uma limitação da plataforma, não um bug — deve ser documentado no `README.md`.
