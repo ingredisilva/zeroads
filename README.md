@@ -1,4 +1,4 @@
-# StreamBlock
+# ZeroAds
 
 > Extensão open source para Chrome que bloqueia anúncios em plataformas de streaming.
 
@@ -10,7 +10,7 @@
 
 ## Sobre o projeto
 
-StreamBlock é uma extensão de navegador gratuita e open source que detecta e bloqueia anúncios em plataformas de streaming, com foco inicial no **Amazon Prime Video**.
+ZeroAds é uma extensão de navegador gratuita e open source que detecta e bloqueia anúncios em plataformas de streaming, com foco inicial no **Amazon Prime Video**.
 
 O projeto foi concebido para ser simples de instalar (sem configuração obrigatória) e transparente — sem coleta de dados, sem telemetria.
 

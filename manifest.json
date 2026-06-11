@@ -1,0 +1,40 @@
+{
+  "manifest_version": 3,
+  "name": "ZeroAds",
+  "version": "0.1.0",
+  "description": "Bloqueia anúncios em plataformas de streaming.",
+  "permissions": ["declarativeNetRequest", "storage", "activeTab", "scripting"],
+  "host_permissions": ["*://*.primevideo.com/*"],
+  "background": {
+    "service_worker": "src/background/service-worker.js"
+  },
+  "action": {
+    "default_popup": "src/popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.primevideo.com/*"],
+      "js": ["src/content/prime-video.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "prime-video",
+        "enabled": true,
+        "path": "rules/prime-video.json"
+      }
+    ]
+  },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  }
+}

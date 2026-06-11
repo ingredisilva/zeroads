@@ -1,6 +1,6 @@
 # Contribuindo
 
-Obrigado pelo interesse em contribuir com o StreamBlock!
+Obrigado pelo interesse em contribuir com o ZeroAds!
 
 ## Como contribuir
 

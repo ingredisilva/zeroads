@@ -12,6 +12,9 @@ node_modules/
 dist/
 build/
 
+# Testes
+coverage/
+
 # Editor
 .vscode/
 .idea/

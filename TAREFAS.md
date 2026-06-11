@@ -1,4 +1,4 @@
-# Tarefas — StreamBlock v1.0 (MVP)
+# Tarefas — ZeroAds v1.0 (MVP)
 
 Backlog de implementação. Ordem dentro de cada milestone respeita dependências.  
 Referências: [`docs/REQUISITOS.md`](docs/REQUISITOS.md) · [`docs/ARQUITETURA.md`](docs/ARQUITETURA.md) · [`specs/prime-video.spec.md`](specs/prime-video.spec.md)

@@ -19,38 +19,56 @@ A extensão é construída sobre o **Manifest V3** do Chrome, composta por três
 ## Estrutura de arquivos
 
 ```
-streamblock/
+zeroads/
 ├── manifest.json
+├── package.json
+├── jest.config.js
 ├── README.md
 ├── LICENSE
 ├── CONTRIBUTING.md
 │
 ├── src/
 │   ├── background/
-│   │   └── service-worker.js     # Service worker MV3 (estado, mensagens)
+│   │   ├── service-worker.js     # Entry point MV3 — registra listeners Chrome
+│   │   └── state.js              # Funções puras de estado (testável isoladamente)
 │   ├── content/
-│   │   └── prime-video.js        # Content script específico do Prime Video
-│   ├── popup/
-│   │   ├── popup.html
-│   │   ├── popup.js
-│   │   └── popup.css
-│   └── options/
-│       ├── options.html          # Página de configurações (lista branca)
-│       ├── options.js
-│       └── options.css
+│   │   ├── prime-video.js        # Entry point content script
+│   │   └── detector.js           # Funções puras de detecção de anúncios (testável)
+│   └── popup/
+│       ├── popup.html
+│       ├── popup.js              # Lógica de UI (funções puras + init de browser)
+│       └── popup.css
 │
 ├── rules/
-│   └── prime-video.json          # Regras declarativeNetRequest
+│   ├── prime-video.json          # Regras declarativeNetRequest (T07)
+│   └── prime-video.meta.json     # Metadados de versionamento das regras
 │
 ├── icons/
 │   ├── icon-16.png
 │   ├── icon-48.png
 │   └── icon-128.png
 │
+├── tests/
+│   ├── mocks/
+│   │   └── chrome.js             # Fábrica de mock das Chrome APIs
+│   └── unit/
+│       ├── background/
+│       │   ├── state.test.js
+│       │   └── service-worker.test.js
+│       ├── content/
+│       │   ├── detector.test.js
+│       │   └── prime-video.test.js
+│       └── popup/
+│           └── popup.test.js
+│
+├── specs/
+│   └── prime-video.spec.md       # Cenários de teste manual (Given/When/Then)
+│
 └── docs/
     ├── REQUISITOS.md
     ├── ARQUITETURA.md
-    └── RISCOS.md
+    ├── RISCOS.md
+    └── ROADMAP.md
 ```
 
 ---
