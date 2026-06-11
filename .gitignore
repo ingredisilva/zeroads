@@ -1,0 +1,19 @@
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Empacotamento da extensão
+*.crx
+*.pem
+*.zip
+
+# Dependências (caso ferramentas de build sejam adicionadas futuramente)
+node_modules/
+dist/
+build/
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
