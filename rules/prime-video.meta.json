@@ -1,1 +1,37 @@
-[]
+[
+  {
+    "id": 1,
+    "description": "Bloqueia scripts, XHR e pixels de rastreamento do ad exchange europeu da Amazon",
+    "addedAt": "2026-06-11",
+    "observedPattern": "aax-eu.amazon-adsystem.com",
+    "fragile": true
+  },
+  {
+    "id": 2,
+    "description": "Bloqueia scripts, XHR e pixels de rastreamento do ad exchange US-East da Amazon",
+    "addedAt": "2026-06-11",
+    "observedPattern": "aax-us-east.amazon-adsystem.com",
+    "fragile": true
+  },
+  {
+    "id": 3,
+    "description": "Bloqueia Mobile Ad System da Amazon (também usado em browser via MADS endpoint)",
+    "addedAt": "2026-06-11",
+    "observedPattern": "mads.amazon-adsystem.com",
+    "fragile": true
+  },
+  {
+    "id": 4,
+    "description": "Bloqueia o script apstag.js (Amazon Publisher Services tag — inicializa ad bidding)",
+    "addedAt": "2026-06-11",
+    "observedPattern": "amazon-adsystem.com/aax2/apstag.js",
+    "fragile": false
+  },
+  {
+    "id": 5,
+    "description": "Bloqueia servidor de anúncios estáticos da Amazon (banners, creative assets)",
+    "addedAt": "2026-06-11",
+    "observedPattern": "s.amazon-adsystem.com",
+    "fragile": true
+  }
+]
