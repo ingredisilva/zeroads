@@ -99,6 +99,79 @@ describe('service-worker', () => {
     });
   });
 
+  // --- toggle full cycle (RF03) ---
+
+  describe('toggle full cycle (RF03)', () => {
+    function getMessageListener() {
+      return chrome.runtime.onMessage.addListener.mock.calls[0][0];
+    }
+
+    it('getState retorna enabled:false imediatamente após setState(false)', () => {
+      // Pre-popula storage com estado inicial
+      chrome.storage.local.set({ enabled: true, counts: { video: 0, banner: 0 } });
+
+      const msgListener = getMessageListener();
+      msgListener({ action: 'setState', enabled: false }, {}, jest.fn());
+
+      const getResponse = jest.fn();
+      msgListener({ action: 'getState' }, {}, getResponse);
+      expect(getResponse).toHaveBeenCalledWith(
+        expect.objectContaining({ enabled: false })
+      );
+    });
+
+    it('getState retorna enabled:true após setState(true)', () => {
+      chrome.storage.local.set({ enabled: false, counts: { video: 0, banner: 0 } });
+
+      const msgListener = getMessageListener();
+      msgListener({ action: 'setState', enabled: true }, {}, jest.fn());
+
+      const getResponse = jest.fn();
+      msgListener({ action: 'getState' }, {}, getResponse);
+      expect(getResponse).toHaveBeenCalledWith(
+        expect.objectContaining({ enabled: true })
+      );
+    });
+
+    it('setIcon usa ícones coloridos ao ativar', () => {
+      chrome.storage.local.set({ counts: { video: 0, banner: 0 } });
+      getMessageListener()({ action: 'setState', enabled: true }, {}, jest.fn());
+      expect(chrome.action.setIcon).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: expect.objectContaining({ 16: expect.not.stringContaining('-off') }),
+        })
+      );
+    });
+
+    it('setIcon usa ícones cinza ao desativar', () => {
+      chrome.storage.local.set({ counts: { video: 0, banner: 0 } });
+      getMessageListener()({ action: 'setState', enabled: false }, {}, jest.fn());
+      expect(chrome.action.setIcon).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: expect.objectContaining({ 16: expect.stringContaining('-off') }),
+        })
+      );
+    });
+
+    it('notifica todas as abas abertas simultaneamente', () => {
+      chrome.storage.local.set({ counts: { video: 0, banner: 0 } });
+      chrome.tabs.query.mockImplementation(function (_filter, cb) {
+        cb([{ id: 10 }, { id: 20 }, { id: 30 }]);
+      });
+      getMessageListener()({ action: 'setState', enabled: false }, {}, jest.fn());
+      expect(chrome.tabs.sendMessage).toHaveBeenCalledWith(10, { action: 'disable' });
+      expect(chrome.tabs.sendMessage).toHaveBeenCalledWith(20, { action: 'disable' });
+      expect(chrome.tabs.sendMessage).toHaveBeenCalledWith(30, { action: 'disable' });
+    });
+
+    it('não envia mensagem a abas quando nenhuma aba do Prime Video está aberta', () => {
+      chrome.storage.local.set({ counts: { video: 0, banner: 0 } });
+      // tabs.query já retorna [] por default no createChromeMock
+      getMessageListener()({ action: 'setState', enabled: false }, {}, jest.fn());
+      expect(chrome.tabs.sendMessage).not.toHaveBeenCalled();
+    });
+  });
+
   // --- onMessage: incrementCount ---
 
   describe('onMessage: incrementCount', () => {
